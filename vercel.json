@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "eat.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "eat.py" }
+  ]
+}
