@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<title>FF Token Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #080C18;
+    --bg-secondary: #0E1425;
+    --bg-card: #121A2E;
+    --bg-elevated: #1A2440;
+    --border-color: #1E2D4A;
+    --text-primary: #E8EEFF;
+    --text-secondary: #8BA0CC;
+    --text-dim: #5A6F99;
+    --cyan: #00D4FF;
+    --cyan-dark: #0099CC;
+    --purple: #8B5CF6;
+    --pink: #EC4899;
+    --amber: #F59E0B;
+    --green: #10B981;
+    --red: #EF4444;
+    --gradient-1: linear-gradient(135deg, #00D4FF, #8B5CF6);
+    --gradient-2: linear-gradient(135deg, #EC4899, #8B5CF6);
+  }
+
+  html, body {
+    background: var(--bg-primary);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Smooth Background Glow */
+  .bg-glow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: bg-breathe 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes bg-breathe {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  .app-container {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 16px 12px 60px;
+    width: 100%;
+  }
+
+  /* Header Slide In */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg-secondary);
+    border-radius: 60px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    backdrop-filter: blur(20px);
+    flex-wrap: wrap;
+    gap: 8px;
+    animation: slide-down 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  /* Text Gradient Shine Animation */
+  .header-brand span { 
+    background: var(--gradient-1); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    background-size: 200% auto;
+    animation: text-shine 3s linear infinite;
+  }
+
+  @keyframes text-shine {
+    to { background-position: 200% center; }
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.04);
+    padding: 4px 12px;
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 0.4; transform: scale(0.8); box-shadow: 0 0 0 rgba(16,185,129,0); }
+    50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px rgba(16,185,129,0.5); }
+  }
+
+  .nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .nav-tab {
+    padding: 8px 14px;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { 
+    border-color: var(--cyan); 
+    color: var(--text-primary); 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+  }
+  .nav-tab.active {
+    background: rgba(0, 212, 255, 0.12);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.15);
+  }
+
+  /* Card Fade & Hover Animations */
+  .card {
+    background: var(--bg-secondary);
+    border-radius: 28px;
+    padding: 20px 18px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 100%;
+    animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Card subtle glowing line effect */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+    transition: all 0.6s ease;
+  }
+
+  .card:hover {
+    border-color: rgba(0, 212, 255, 0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .card:hover::before {
+    left: 100%;
+  }
+
+  .card-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .card-sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .input-modern {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 20px;
+    padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-primary);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  
+  .input-modern:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+    background: rgba(0, 212, 255, 0.02);
+    transform: translateY(-1px);
+  }
+  .input-modern::placeholder { color: var(--text-dim); }
+
+  /* Button Hover Animations */
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--gradient-1);
+    background-size: 200% auto;
+    color: #080C18;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+  }
+  
+  .btn-primary:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+    background-position: right center;
+  }
+  
+  .btn-primary:active { transform: scale(0.97); }
+  
+  .btn-primary:disabled { 
+    opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; 
+    background: var(--border-color); color: var(--text-secondary);
+  }
+
+  .btn-oauth {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .btn-oauth:active { transform: scale(0.97); }
+
+  .btn-oauth-google {
+    background: #ffffff;
+    color: #1a1a2e;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.08);
+  }
+  .btn-oauth-google:hover { box-shadow: 0 8px 25px rgba(255,255,255,0.2); transform: translateY(-2px); }
+
+  .btn-oauth-facebook {
+    background: linear-gradient(135deg, #1877F2, #0d5bbd);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(24, 119, 242, 0.25);
+  }
+  .btn-oauth-facebook:hover { box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4); transform: translateY(-2px); }
+
+  /* Pills Animation */
+  .platform-pills {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 12px;
+  }
+  .platform-pill {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border-radius: 20px;
+    background: var(--bg-primary);
+    border: 1.5px solid var(--border-color);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .platform-pill:hover { border-color: var(--text-dim); transform: translateY(-1px); }
+  
+  .platform-pill.active {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    background: rgba(0, 212, 255, 0.08);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+    transform: translateY(-1px);
+  }
+  .platform-pill input[type="radio"] { display: none; }
+
+  .loader-spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: #080C18;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    padding: 8px 18px;
+    border-radius: 40px;
+    font-size: 12px;
+    border: 1px solid var(--border-color);
+    z-index: 100;
+    backdrop-filter: blur(20px);
+    max-width: 90%;
+    text-align: center;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* POPUP MODAL ANIMATIONS */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(8, 12, 24, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .modal-content {
+    background: var(--bg-secondary);
+    border-radius: 32px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 24px;
+    position: relative;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+    text-align: center;
+    overflow: hidden;
+  }
+  
+  .modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-glow {
+    position: absolute;
+    top: -50%; left: 50%;
+    transform: translateX(-50%);
+    width: 200px; height: 200px;
+    background: var(--cyan);
+    filter: blur(100px);
+    opacity: 0.15;
+    pointer-events: none;
+    animation: pulse-glow 3s infinite alternate;
+  }
+  
+  @keyframes pulse-glow {
+    0% { opacity: 0.1; transform: translateX(-50%) scale(0.9); }
+    100% { opacity: 0.25; transform: translateX(-50%) scale(1.1); }
+  }
+
+  .success-icon {
+    width: 70px; height: 70px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+    animation: pop-icon 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+  }
+  
+  @keyframes pop-icon {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
+  .success-icon svg {
+    width: 32px; height: 32px;
+    stroke: var(--green);
+    stroke-width: 3;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: draw-check 0.6s ease-out 0.6s forwards;
+  }
+  
+  @keyframes draw-check {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .modal-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .token-box {
+    background: var(--bg-primary);
+    border: 1px dashed var(--border-color);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .token-box:hover { border-color: var(--cyan); }
+  .token-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: left;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .token-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-primary);
+    word-break: break-all;
+    text-align: left;
+    max-height: 60px;
+    overflow-y: auto;
+    line-height: 1.5;
+  }
+  .token-value::-webkit-scrollbar { width: 4px; }
+  .token-value::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+  .modal-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+  }
+  
+  .modal-btn-copy {
+    background: var(--gradient-1);
+    background-size: 200% auto;
+    color: #080C18;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+  }
+  .modal-btn-copy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
+    background-position: right center;
+  }
+  .modal-btn-copy.copied {
+    background: var(--green);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+    transform: scale(0.98);
+  }
+  
+  .modal-btn-close {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+  }
+  .modal-btn-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+  }
+
+  .fw-600 { font-weight: 600; }
+  .text-dim { color: var(--text-dim); }
+  .text-sm { font-size: 12px; }
+
+  @media (min-width: 768px) {
+    .app-container { padding: 24px 20px 60px; max-width: 700px; }
+    .header { padding: 14px 24px; }
+    .header-brand { font-size: 20px; }
+    .nav-tab { font-size: 13px; padding: 10px 20px; }
+    .card { padding: 28px 32px; border-radius: 32px; }
+    .card-title { font-size: 22px; }
+  }
+
+  @media (max-width: 480px) {
+    .app-container { padding: 12px 8px 40px; }
+    .header { padding: 8px 12px; border-radius: 40px; }
+    .header-brand { font-size: 14px; gap: 6px; }
+    .header-brand svg { width: 22px; height: 22px; }
+    .nav-tab { font-size: 10px; padding: 6px 10px; }
+    .card { padding: 14px 12px; border-radius: 20px; }
+    .card-title { font-size: 16px; }
+    .card-sub { font-size: 12px; }
+    .input-modern { font-size: 11px; padding: 10px 12px; border-radius: 16px; }
+    .btn-primary { font-size: 12px; padding: 10px; border-radius: 20px; }
+    .btn-oauth { font-size: 12px; padding: 10px; border-radius: 20px; }
+    .platform-pill { font-size: 11px; padding: 8px; }
+    .toast { font-size: 11px; padding: 6px 14px; bottom: 12px; }
+    .status-badge { font-size: 9px; padding: 3px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div id="app">
+  <div class="app-container">
+
+    <header class="header">
+      <div class="header-brand">
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+          <rect x="2" y="2" width="28" height="28" rx="10" fill="url(#g1)" opacity="0.15"/>
+          <path d="M10 16L14 20L22 12" stroke="#00D4FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="32" y2="32"><stop offset="0%" stop-color="#00D4FF"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+        </svg>
+        <span>FF Token Studio</span>
+      </div>
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span id="serverStatus">API Online</span>
+      </div>
+    </header>
+
+    <nav class="nav-tabs" id="navTabs"></nav>
+    <div id="toolPanel"></div>
+  </div>
+</div>
+
+<!-- POPUP MODAL -->
+<div id="successModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-glow"></div>
+    
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    
+    <h2 class="modal-title">Congratulations!</h2>
+    <p class="modal-sub">Your Access Token has been generated successfully.</p>
+    
+    <div class="token-box">
+      <div class="token-label">🔑 Access Token</div>
+      <div class="token-value" id="modalTokenValue">Loading...</div>
+    </div>
+    
+    <button class="modal-btn modal-btn-copy" id="modalCopyBtn" onclick="copyModalToken()">
+      📋 Copy Token
+    </button>
+    <button class="modal-btn modal-btn-close" onclick="closeModal()">
+      Close
+    </button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : 'https://eat-acces-web.onrender.com';
+
+  const OAUTH_URLS = {
+    google: 'https://auth.garena.com/universal/oauth?platform=8&response_type=code&locale=en-SG&client_id=100067&redirect_uri=https://api.ff.garena.co.id/auth/auth/callback_n?site=https://api-discountstore.kiosgamer.gameid.garena.co.id/oauth/callback_redirect/',
+    facebook: 'https://auth.garena.com/universal/oauth?platform=3&response_type=code&locale=en-SG&client_id=100067&redirect_uri=https://api.ff.garena.co.id/auth/auth/callback_n?site=https://api-discountstore.kiosgamer.gameid.garena.co.id/oauth/callback_redirect/'
+  };
+
+  const ENDPOINTS = [
+    { id: 'generator', label: 'EAT Gen', icon: '⚡', isGenerator: true }
+  ];
+
+  let activeTab = 'generator';
+  let loading = {};
+  let paramStore = {};
+  let currentTokenToCopy = '';
+
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._hide);
+    el._hide = setTimeout(() => {
+      el.classList.remove('show');
+    }, 2500);
+  }
+
+  function copyToClipboard(text, label = 'Copied!', btnElement = null) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`📋 ${label}`);
+        if (btnElement) {
+          btnElement.classList.add('copied');
+          btnElement.innerHTML = '✅ Copied!';
+          setTimeout(() => {
+            btnElement.classList.remove('copied');
+            btnElement.innerHTML = '📋 Copy Token';
+          }, 2000);
+        }
+      }).catch(() => fallbackCopy(text, label));
+    } else {
+      fallbackCopy(text, label);
+    }
+  }
+
+  function fallbackCopy(text, label) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    ta.style.left = '-9999px';
+    ta.style.top = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast(`📋 ${label}`);
+    } catch {
+      showToast('⚠️ Could not copy');
+    }
+    ta.remove();
+  }
+
+  function showSuccessModal(token) {
+    currentTokenToCopy = token;
+    const modal = document.getElementById('successModal');
+    document.getElementById('modalTokenValue').textContent = token;
+    
+    const copyBtn = document.getElementById('modalCopyBtn');
+    copyBtn.classList.remove('copied');
+    copyBtn.innerHTML = '📋 Copy Token';
+    
+    modal.classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('successModal').classList.remove('active');
+  }
+
+  function copyModalToken() {
+    if (currentTokenToCopy) {
+      const btn = document.getElementById('modalCopyBtn');
+      copyToClipboard(currentTokenToCopy, 'Access Token Copied!', btn);
+    }
+  }
+
+  document.getElementById('successModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  function renderNav() {
+    const container = document.getElementById('navTabs');
+    container.innerHTML = '';
+    ENDPOINTS.forEach(ep => {
+      const btn = document.createElement('button');
+      btn.className = `nav-tab ${activeTab === ep.id ? 'active' : ''}`;
+      btn.innerHTML = `${ep.icon} ${ep.label}`;
+      btn.onclick = () => {
+        activeTab = ep.id;
+        renderNav();
+        renderTool();
+      };
+      container.appendChild(btn);
+    });
+  }
+
+  function renderTool() {
+    const ep = ENDPOINTS.find(e => e.id === activeTab);
+    const panel = document.getElementById('toolPanel');
+    if (!ep) return;
+
+    if (ep.isGenerator) {
+      panel.innerHTML = `
+        <div class="card">
+          <div class="card-label">⚡ EAT Token Generator</div>
+          <div class="card-title">Generate EAT Token</div>
+          <div class="card-sub">Login with Google or Facebook</div>
+
+          <button class="btn-oauth btn-oauth-google" onclick="openOAuth('google')">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            Sign in with Google
+          </button>
+
+          <button class="btn-oauth btn-oauth-facebook" onclick="openOAuth('facebook')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Sign in with Facebook
+          </button>
+
+          <div class="platform-pills" style="margin-top:8px;">
+            <label class="platform-pill active" id="pill-google">
+              <input type="radio" name="genPlatform" value="google" checked onchange="updatePlatformPills()"> 🔴 Google
+            </label>
+            <label class="platform-pill" id="pill-facebook">
+              <input type="radio" name="genPlatform" value="facebook" onchange="updatePlatformPills()"> 🔵 Facebook
+            </label>
+          </div>
+        </div>
+
+        <div class="card" style="animation-delay: 0.3s;">
+          <div class="card-label">🔓 EAT → ACCESS</div>
+          <div class="card-title">EAT → Access</div>
+          <div class="card-sub">🔗 ${API_BASE}/eat-to-access</div>
+          
+          <label class="text-dim text-sm fw-600" style="display:block; margin-top:10px;">EAT Token / URL *</label>
+          <input type="text" id="param_eat-to-access_eat_token" class="input-modern" placeholder="Paste EAT token or full URL here" value="${(paramStore['eat-to-access_eat_token'] || '').replace(/"/g, '&quot;')}" style="margin-top:4px;">
+
+          <button class="btn-primary" id="apiBtn_eat-to-access" onclick="executeAPI('eat-to-access')" style="margin-top:14px;" ${loading['eat-to-access'] ? 'disabled' : ''}>
+            ${loading['eat-to-access'] ? '<span class="loader-spinner"></span> Processing...' : `▶️ Execute EAT → Access`}
+          </button>
+        </div>
+      `;
+      
+      const tokenInput = document.getElementById('param_eat-to-access_eat_token');
+      if (tokenInput) {
+        tokenInput.oninput = () => { paramStore['eat-to-access_eat_token'] = tokenInput.value; };
+      }
+      return;
+    }
+  }
+
+  async function executeAPI(epId) {
+    const path = '/eat-to-access';
+    const paramName = 'eat_token';
+    const el = document.getElementById(`param_${epId}_${paramName}`);
+    let rawVal = el ? el.value.trim() : (paramStore[`${epId}_${paramName}`] || '');
+
+    if (!rawVal) {
+      showToast(`⚠️ EAT Token / URL is required`);
+      return;
+    }
+
+    let val = rawVal;
+    if (rawVal.includes('eat=')) {
+        let extracted = rawVal.split('eat=')[1];
+        if (extracted.includes('&')) {
+            extracted = extracted.split('&')[0];
+        }
+        val = extracted.trim();
+        
+        if (el) {
+            el.value = val;
+            paramStore[`${epId}_${paramName}`] = val;
+        }
+        showToast(`✅ Extracted Token from URL`);
+    }
+
+    const params = new URLSearchParams();
+    params.append(paramName, val);
+
+    const url = API_BASE + path + '?' + params.toString();
+    loading[epId] = true;
+    
+    renderTool();
+
+    try {
+      const resp = await fetch(url, { signal: AbortSignal.timeout(30000) });
+      let json;
+      try { json = await resp.json(); } catch { json = { success: false, error: 'Invalid response' }; }
+      
+      if (json.success && json.access_token) {
+        showSuccessModal(json.access_token);
+      } else {
+        showToast(`❌ ${json.message || json.error || 'Failed to generate token'}`);
+      }
+      
+    } catch (err) {
+      showToast(`❌ Network Error: ${err.message}`);
+    }
+
+    loading[epId] = false;
+    renderTool();
+  }
+
+  function openOAuth(platform) {
+    const url = OAUTH_URLS[platform];
+    const pill = document.querySelector(`input[name="genPlatform"][value="${platform}"]`);
+    if (pill) { pill.checked = true; updatePlatformPills(); }
+    window.open(url, '_blank');
+    showToast(`🔐 Opening ${platform === 'google' ? 'Google' : 'Facebook'} login...`);
+  }
+
+  function updatePlatformPills() {
+    const selected = document.querySelector('input[name="genPlatform"]:checked');
+    document.querySelectorAll('.platform-pill').forEach(el => el.classList.remove('active'));
+    if (selected) {
+      const parent = selected.closest('.platform-pill');
+      if (parent) parent.classList.add('active');
+    }
+  }
+
+  async function checkServer() {
+    try {
+      const resp = await fetch(API_BASE + '/', { signal: AbortSignal.timeout(3000) });
+      document.getElementById('serverStatus').textContent = resp.ok ? 'API Online' : 'API Error';
+    } catch {
+      document.getElementById('serverStatus').textContent = 'Offline';
+    }
+  }
+
+  renderNav();
+  renderTool();
+  checkServer();
+  setInterval(checkServer, 20000);
+</script>
+
+</body>
+</html>
